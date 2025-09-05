@@ -63,7 +63,7 @@ onMounted(() => {
 		</div>
 
 		<div class="p-4 bg-neutral-800 rounded-lg mt-6">
-			<div class="flex gap-4 flex-wrap">
+			<div class="flex flex-wrap gap-1">
 				<ClipImage v-for="(image, index) in clipImages" :key="index" :image />
 			</div>
 		</div>
