@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+
+import ClipImage from './components/ui/clip-image/ClipImage.vue';
+import type { ClipImage as ClipImageType } from './types/clip-image';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,12 +14,16 @@ import {
 	TagsInputItemText,
 } from '@/components/ui/tags-input';
 
-const keywords = ref();
+const clipImages = ref<ClipImageType[]>([]);
+const keywords = ref<string[]>([]);
+
+onMounted(() => {
+	clipImages.value = JSON.parse(localStorage.getItem('images') || '[]');
+});
 </script>
 
 <template>
 	<div class="bg-neutral-900 p-8 h-screen w-screen">
-		<!-- Top Navbar -->
 		<div class="bg-neutral-800 rounded-xl shadow-md p-4 mb-6 flex justify-between items-center">
 			<div class="text-white text-2xl font-bold tracking-tight">Clipcord</div>
 			<div class="flex gap-3">
@@ -52,6 +59,12 @@ const keywords = ref();
 						<div class="h-30 w-30 bg-neutral-700 rounded-lg"></div>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<div class="p-4 bg-neutral-800 rounded-lg mt-6">
+			<div class="flex gap-4 flex-wrap">
+				<ClipImage v-for="(image, index) in clipImages" :key="index" :image />
 			</div>
 		</div>
 	</div>
