@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-
-import ClipImage from './components/clip-image/ClipImage.vue';
-import type { ClipImage as ClipImageType } from './types/clipImage';
-import EditClipImage from './components/clip-image/EditClipImage.vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { Copy, Pencil, Trash } from 'lucide-vue-next';
 
 import { ClipMode } from '@/types/clipMode';
-import { Input } from '@/components/ui/input';
-import ToggleGroup from './components/ui/toggle-group/ToggleGroup.vue';
-import ToggleGroupItem from './components/ui/toggle-group/ToggleGroupItem.vue';
+import type { ClipImage as ClipImageType } from '@/types/clipImage';
 
-import { Copy, Pencil, Trash } from 'lucide-vue-next';
-import Button from './components/ui/button/Button.vue';
+import ClipImage from '@/components/clip-image/ClipImage.vue';
+import EditClipImage from '@/components/clip-image/EditClipImage.vue';
+import { Input } from '@/components/ui/input';
+import SlidingToggleGroup from '@/components/ui/toggle-group/SlidingToggleGroup.vue';
+import Button from '@/components/ui/button/Button.vue';
+import SlidingToggleGroupItem from './components/ui/toggle-group/SlidingToggleGroupItem.vue';
 
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
@@ -36,17 +35,29 @@ onMounted(() => {
 			<div class="col-start-1 col-span-2 bg-neutral-800 rounded-lg">
 				<div class="flex justify-between items-center">
 					<div class="p-4">
-						<ToggleGroup v-model="clipMode" type="single">
-							<ToggleGroupItem :value="ClipMode.COPY" aria-label="Copy mode">
+						<SlidingToggleGroup v-model="clipMode" type="single">
+							<SlidingToggleGroupItem
+								:disabled="clipMode === ClipMode.COPY"
+								:value="ClipMode.COPY"
+								aria-label="Copy mode"
+							>
 								<Copy /> Copy mode
-							</ToggleGroupItem>
-							<ToggleGroupItem :value="ClipMode.EDIT" aria-label="Edit mode">
+							</SlidingToggleGroupItem>
+							<SlidingToggleGroupItem
+								:disabled="clipMode === ClipMode.EDIT"
+								:value="ClipMode.EDIT"
+								aria-label="Edit mode"
+							>
 								<Pencil /> Edit mode
-							</ToggleGroupItem>
-							<ToggleGroupItem :value="ClipMode.DELETE" aria-label="Delete mode">
+							</SlidingToggleGroupItem>
+							<SlidingToggleGroupItem
+								:disabled="clipMode === ClipMode.DELETE"
+								:value="ClipMode.DELETE"
+								aria-label="Delete mode"
+							>
 								<Trash /> Delete mode
-							</ToggleGroupItem>
-						</ToggleGroup>
+							</SlidingToggleGroupItem>
+						</SlidingToggleGroup>
 					</div>
 					<div class="p-4 flex gap-2">
 						<Button variant="outline">Import</Button>
