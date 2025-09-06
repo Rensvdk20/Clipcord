@@ -28,6 +28,11 @@ const filteredClipImages = computed(() => {
 		image.keywords.join(' ').toLowerCase().includes(searchTerm)
 	);
 });
+
+function deleteClipImage(image: ClipImageType) {
+	clipImages.value = clipImages.value.filter((img) => img.id !== image.id);
+	localStorage.setItem('images', JSON.stringify(clipImages.value));
+}
 </script>
 
 <template>
@@ -89,6 +94,7 @@ const filteredClipImages = computed(() => {
 					:image
 					:clipMode
 					@select-clip-image="(img) => (selectedClipImage = img)"
+					@delete-clip-image="deleteClipImage"
 				/>
 			</div>
 		</div>
