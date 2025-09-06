@@ -1,6 +1,6 @@
 import type { ClipImage } from '@/types/clipImage';
 
-function useExportToJson<T>(data: T, filename: string): void {
+export function exportToJson<T>(data: T, filename: string): void {
 	const jsonString = JSON.stringify(data, null, 2);
 	const blob = new Blob([jsonString], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
@@ -15,7 +15,7 @@ function useExportToJson<T>(data: T, filename: string): void {
 	URL.revokeObjectURL(url);
 }
 
-export function useExportClipImages(images: ClipImage[]): void {
+export function exportClipImages(images: ClipImage[]): void {
 	const imagesWithoutId = images.map(({ id, ...rest }) => rest);
-	useExportToJson(imagesWithoutId, 'clipcord-export.json');
+	exportToJson(imagesWithoutId, 'clipcord-export.json');
 }

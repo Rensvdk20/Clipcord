@@ -5,13 +5,14 @@ import { Copy, Pencil, Trash } from 'lucide-vue-next';
 import { ClipMode } from '@/types/clipMode';
 import type { ClipImage as ClipImageType } from '@/types/clipImage';
 
+import { exportClipImages } from '@/composables/export/exportClipImages';
+
 import ClipImage from '@/components/clip-image/ClipImage.vue';
 import EditClipImage from '@/components/clip-image/EditClipImage.vue';
 import { Input } from '@/components/ui/input';
 import SlidingToggleGroup from '@/components/ui/toggle-group/SlidingToggleGroup.vue';
 import Button from '@/components/ui/button/Button.vue';
 import SlidingToggleGroupItem from '@/components/ui/toggle-group/SlidingToggleGroupItem.vue';
-import { useExportClipImages } from '@/composables/export/useExportClipImages';
 
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
@@ -74,8 +75,7 @@ function deleteClipImage(image: ClipImageType) {
 						</SlidingToggleGroup>
 					</div>
 					<div class="p-4 flex gap-2">
-						<Button variant="outline">Import</Button>
-						<Button @click="useExportClipImages(clipImages)" variant="outline"
+						<Button @click="exportClipImages(clipImages)" variant="outline"
 							>Export</Button
 						>
 					</div>
