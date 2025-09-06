@@ -5,7 +5,7 @@ import { Copy, Pencil, Trash } from 'lucide-vue-next';
 import { ClipMode } from '@/types/clipMode';
 import type { ClipImage as ClipImageType } from '@/types/clipImage';
 
-import { exportClipImages } from '@/composables/export/exportClipImages';
+import { useExportClipImages } from '@/composables/export/exportClipImages';
 import { useImportClipImages } from '@/composables/import/importClipImages';
 
 import ClipImage from '@/components/clip-image/ClipImage.vue';
@@ -22,6 +22,9 @@ const searchClipImages = ref<string>();
 const selectedClipImage = ref<ClipImageType | null>(null);
 const exportFileInput = ref<HTMLInputElement>();
 
+const { importClipImages } = useImportClipImages(clipImages);
+const { exportClipImages } = useExportClipImages();
+
 onMounted(() => {
 	clipImages.value = JSON.parse(localStorage.getItem('images') || '[]');
 });
@@ -37,8 +40,6 @@ function deleteClipImage(image: ClipImageType) {
 	clipImages.value = clipImages.value.filter((img) => img.id !== image.id);
 	localStorage.setItem('images', JSON.stringify(clipImages.value));
 }
-
-const { importClipImages } = useImportClipImages(clipImages);
 </script>
 
 <template>
