@@ -6,6 +6,7 @@ import { ClipMode } from '@/types/clipMode';
 import type { ClipImage as ClipImageType } from '@/types/clipImage';
 
 import { exportClipImages } from '@/composables/export/exportClipImages';
+import { useImportClipImages } from '@/composables/import/importClipImages';
 
 import ClipImage from '@/components/clip-image/ClipImage.vue';
 import EditClipImage from '@/components/clip-image/EditClipImage.vue';
@@ -19,6 +20,7 @@ const clipMode = ref<ClipMode>(ClipMode.COPY);
 
 const searchClipImages = ref<string>();
 const selectedClipImage = ref<ClipImageType | null>(null);
+const exportFileInput = ref<HTMLInputElement>();
 
 onMounted(() => {
 	clipImages.value = JSON.parse(localStorage.getItem('images') || '[]');
@@ -35,6 +37,8 @@ function deleteClipImage(image: ClipImageType) {
 	clipImages.value = clipImages.value.filter((img) => img.id !== image.id);
 	localStorage.setItem('images', JSON.stringify(clipImages.value));
 }
+
+const { importClipImages } = useImportClipImages(clipImages);
 </script>
 
 <template>
@@ -75,6 +79,18 @@ function deleteClipImage(image: ClipImageType) {
 						</SlidingToggleGroup>
 					</div>
 					<div class="p-4 flex gap-2">
+						<div>
+							<Button variant="outline" @click="exportFileInput?.click()"
+								>Import</Button
+							>
+							<input
+								ref="exportFileInput"
+								type="file"
+								accept=".json"
+								class="hidden"
+								@change="importClipImages"
+							/>
+						</div>
 						<Button @click="exportClipImages(clipImages)" variant="outline"
 							>Export</Button
 						>
