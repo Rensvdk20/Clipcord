@@ -15,19 +15,27 @@ import SlidingToggleGroupItem from './components/ui/toggle-group/SlidingToggleGr
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
 
+const searchClipImages = ref<string>();
 const selectedClipImage = ref<ClipImageType | null>(null);
 
 onMounted(() => {
 	clipImages.value = JSON.parse(localStorage.getItem('images') || '[]');
 });
+
+const filteredClipImages = computed(() => {
+	const searchTerm = searchClipImages.value?.toLowerCase() || '';
+	return clipImages.value.filter((image) =>
+		image.keywords.join(' ').toLowerCase().includes(searchTerm)
+	);
+});
 </script>
 
 <template>
 	<div class="bg-neutral-900 p-8 h-screen w-screen">
-		<div class="bg-neutral-800 rounded-xl shadow-md p-4 mb-6 flex justify-between items-center">
+		<div class="flex justify-between items-center bg-neutral-800 rounded-xl shadow-md p-4 mb-6">
 			<div class="text-white text-2xl font-bold tracking-tight">Clipcord</div>
-			<div class="flex gap-3">
-				<Input placeholder="Search" class="w-64" />
+			<div class="flex col-start-3 gap-3">
+				<Input v-model="searchClipImages" placeholder="Search" class="w-75" />
 			</div>
 		</div>
 
@@ -76,7 +84,7 @@ onMounted(() => {
 		<div class="p-4 bg-neutral-800 rounded-lg mt-6">
 			<div class="flex flex-wrap gap-1">
 				<ClipImage
-					v-for="(image, index) in clipImages"
+					v-for="(image, index) in filteredClipImages"
 					:key="index"
 					:image
 					:clipMode
