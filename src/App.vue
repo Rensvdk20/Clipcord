@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { Copy, Pencil, Trash } from 'lucide-vue-next';
+import { Copy, Pencil, Trash, X } from 'lucide-vue-next';
 
 import { ClipMode } from '@/types/clipMode';
 import type { ClipImage as ClipImageType } from '@/types/clipImage';
@@ -43,11 +43,22 @@ function deleteClipImage(image: ClipImageType) {
 </script>
 
 <template>
-	<div class="bg-neutral-900 p-8 h-screen w-screen">
+	<div class="bg-neutral-900 p-8 w-full">
 		<div class="flex justify-between items-center bg-neutral-800 rounded-xl shadow-md p-4 mb-6">
 			<div class="text-white text-2xl font-bold tracking-tight">Clipcord</div>
-			<div class="flex col-start-3 gap-3">
-				<Input v-model="searchClipImages" placeholder="Search" class="w-75" />
+			<div class="relative w-full max-w-sm items-center">
+				<Input
+					v-model="searchClipImages"
+					type="text"
+					placeholder="Search..."
+					class="pr-10"
+				/>
+				<span class="absolute end-0 inset-y-0 flex items-center justify-center px-2">
+					<X
+						@click="searchClipImages = ''"
+						class="size-6 text-muted-foreground cursor-pointer"
+					/>
+				</span>
 			</div>
 		</div>
 
