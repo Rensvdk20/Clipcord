@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input';
 import SlidingToggleGroup from '@/components/ui/toggle-group/SlidingToggleGroup.vue';
 import Button from '@/components/ui/button/Button.vue';
 import SlidingToggleGroupItem from '@/components/ui/toggle-group/SlidingToggleGroupItem.vue';
+import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue';
+import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
 
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
@@ -43,10 +45,12 @@ function deleteClipImage(image: ClipImageType) {
 </script>
 
 <template>
-	<div class="bg-neutral-900 p-8 w-full">
-		<div class="flex justify-between items-center bg-neutral-800 rounded-xl shadow-md p-4 mb-6">
-			<div class="text-white text-2xl font-bold tracking-tight">Clipcord</div>
-			<div class="relative w-full max-w-sm items-center">
+	<div class="p-4 md:p-8">
+		<div
+			class="flex gap-4 items-center bg-neutral-800 rounded-xl shadow-md p-4 mb-6 justify-center md:justify-between"
+		>
+			<div class="text-white text-2xl font-bold">Clipcord</div>
+			<div class="relative w-full max-w-sm items-center hidden md:block">
 				<Input
 					v-model="searchClipImages"
 					type="text"
@@ -62,11 +66,15 @@ function deleteClipImage(image: ClipImageType) {
 			</div>
 		</div>
 
-		<div class="grid grid-cols-2 gap-4">
-			<div class="col-start-1 col-span-2 bg-neutral-800 rounded-lg">
-				<div class="flex justify-between items-center">
-					<div class="p-4">
-						<SlidingToggleGroup v-model="clipMode" type="single">
+		<div class="grid xl:grid-cols-2 lg:grid-cols-1 lg:gap-4 gap-6">
+			<div class="col-start-1 xl:col-span-2 bg-neutral-800 rounded-lg">
+				<div class="flex xl:flex-row flex-col justify-between xl:items-center">
+					<div class="p-4 xl:pr-0">
+						<SlidingToggleGroup
+							class="md:block hidden"
+							v-model="clipMode"
+							type="single"
+						>
 							<SlidingToggleGroupItem
 								:disabled="clipMode === ClipMode.COPY"
 								:value="ClipMode.COPY"
@@ -89,8 +97,41 @@ function deleteClipImage(image: ClipImageType) {
 								<Trash /> Delete mode
 							</SlidingToggleGroupItem>
 						</SlidingToggleGroup>
+
+						<ToggleGroup
+							class="md:hidden block w-full"
+							v-model="clipMode"
+							type="single"
+						>
+							<ToggleGroupItem
+								class="w-full my-1"
+								:disabled="clipMode === ClipMode.COPY"
+								:value="ClipMode.COPY"
+								aria-label="Copy mode"
+							>
+								<Copy /> Copy mode
+							</ToggleGroupItem>
+							<ToggleGroupItem
+								class="w-full my-1"
+								:disabled="clipMode === ClipMode.EDIT"
+								:value="ClipMode.EDIT"
+								aria-label="Edit mode"
+							>
+								<Pencil /> Edit mode
+							</ToggleGroupItem>
+							<ToggleGroupItem
+								class="w-full my-1"
+								:disabled="clipMode === ClipMode.DELETE"
+								:value="ClipMode.DELETE"
+								aria-label="Delete mode"
+							>
+								<Trash /> Delete mode
+							</ToggleGroupItem>
+						</ToggleGroup>
 					</div>
-					<div class="p-4 flex gap-2">
+					<div
+						class="p-4 xl:pl-0 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal"
+					>
 						<div>
 							<Button variant="outline" @click="exportFileInput?.click()"
 								>Import</Button
@@ -108,12 +149,30 @@ function deleteClipImage(image: ClipImageType) {
 						>
 					</div>
 				</div>
-				<hr />
+				<hr class="lg:block hidden" />
 			</div>
+
 			<div
-				class="flex flex-col col-start-3 justify-center p-4 bg-neutral-800 rounded-lg w-150 max-w-150 h-60"
+				class="flex flex-col lg:col-start-3 justify-center p-4 bg-neutral-800 rounded-lg xl:w-150 xl:max-w-150 md:h-60 sm:h-auto"
 			>
 				<EditClipImage :clipImages :selectedClipImage :clipMode />
+			</div>
+		</div>
+
+		<div class="p-4 bg-neutral-800 rounded-lg mt-6 block md:hidden">
+			<div class="relative w-full items-center">
+				<Input
+					v-model="searchClipImages"
+					type="text"
+					placeholder="Search..."
+					class="pr-10"
+				/>
+				<span class="absolute end-0 inset-y-0 flex items-center justify-center px-2">
+					<X
+						@click="searchClipImages = ''"
+						class="size-6 text-muted-foreground cursor-pointer"
+					/>
+				</span>
 			</div>
 		</div>
 

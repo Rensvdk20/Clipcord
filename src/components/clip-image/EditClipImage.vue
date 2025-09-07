@@ -87,8 +87,8 @@ function editClipImage() {
 </script>
 
 <template>
-	<div class="grid grid-cols-2">
-		<div>
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-0">
+		<div class="order-2 md:order-1">
 			<div class="mb-4">
 				<Input v-model="imageSrc" placeholder="Image URL" />
 			</div>
@@ -109,7 +109,7 @@ function editClipImage() {
 				<Button v-else @click="addClipImage" class="w-full">Add</Button>
 			</div>
 		</div>
-		<div class="flex justify-center items-center">
+		<div class="flex justify-center items-center order-1 md:order-2">
 			<img
 				v-if="imageSrc && imageSrc.includes('http')"
 				class="h-30 w-30 bg-neutral-700 rounded-lg"
