@@ -179,7 +179,7 @@ function deleteClipImage(image: ClipImageType) {
 		</div>
 
 		<div class="p-4 bg-neutral-800 rounded-lg mt-6">
-			<div class="flex flex-wrap gap-1">
+			<div v-if="filteredClipImages.length > 0" class="flex flex-wrap gap-1">
 				<ClipImage
 					v-for="(image, index) in filteredClipImages"
 					:key="index"
@@ -189,6 +189,7 @@ function deleteClipImage(image: ClipImageType) {
 					@delete-clip-image="deleteClipImage"
 				/>
 			</div>
+			<div v-else>No images found</div>
 		</div>
 	</div>
 </template>
