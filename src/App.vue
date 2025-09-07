@@ -33,8 +33,10 @@ onMounted(() => {
 
 const filteredClipImages = computed(() => {
 	const searchTerm = searchClipImages.value?.toLowerCase() || '';
+	if (!searchTerm) return clipImages.value;
+
 	return clipImages.value.filter((image) =>
-		image.keywords.join(' ').toLowerCase().includes(searchTerm)
+		image.keywords.some((keyword) => keyword.toLowerCase().startsWith(searchTerm))
 	);
 });
 
