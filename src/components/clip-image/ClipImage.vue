@@ -26,7 +26,7 @@ function selectClipImage() {
 
 <template>
 	<div
-		class="p-2 hover:cursor-pointer hover:bg-neutral-700 rounded-lg"
+		class="flex items-center p-2 hover:cursor-pointer hover:bg-neutral-700 rounded-lg"
 		:class="{ 'hover:bg-red-600/10': props.clipMode === ClipMode.DELETE }"
 		@click="selectClipImage"
 	>
