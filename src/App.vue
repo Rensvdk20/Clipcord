@@ -17,6 +17,9 @@ import SlidingToggleGroupItem from '@/components/ui/toggle-group/SlidingToggleGr
 import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
 
+import 'vue-sonner/style.css';
+import { Toaster } from '@/components/ui/sonner/';
+
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
 
@@ -192,6 +195,7 @@ function deleteClipImage(image: ClipImageType) {
 			<div v-else>No images found</div>
 		</div>
 	</div>
+	<Toaster theme="dark" />
 </template>
 
 <style scoped></style>
