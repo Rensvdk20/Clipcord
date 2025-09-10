@@ -19,6 +19,7 @@ import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
 
 import 'vue-sonner/style.css';
 import { Toaster } from '@/components/ui/sonner/';
+import ClipImagePacks from './components/clip-image/ClipImagePacks.vue';
 
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
@@ -137,6 +138,7 @@ function deleteClipImage(image: ClipImageType) {
 					<div
 						class="p-4 xl:pl-0 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal"
 					>
+						<ClipImagePacks />
 						<div>
 							<Button variant="outline" @click="exportFileInput?.click()"
 								>Import</Button
