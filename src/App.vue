@@ -28,7 +28,7 @@ const searchClipImages = ref<string>();
 const selectedClipImage = ref<ClipImageType | null>(null);
 const exportFileInput = ref<HTMLInputElement>();
 
-const { importClipImages } = useImportClipImages(clipImages);
+const { importClipImages, importClipImagesFromFile } = useImportClipImages(clipImages);
 const { exportClipImages } = useExportClipImages();
 
 onMounted(() => {
@@ -138,7 +138,7 @@ function deleteClipImage(image: ClipImageType) {
 					<div
 						class="p-4 xl:pl-0 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal"
 					>
-						<ClipImagePacks />
+						<ClipImagePacks @import-clip-images="importClipImages" />
 						<div>
 							<Button variant="outline" @click="exportFileInput?.click()"
 								>Import</Button
@@ -148,7 +148,7 @@ function deleteClipImage(image: ClipImageType) {
 								type="file"
 								accept=".json"
 								class="hidden"
-								@change="importClipImages"
+								@change="importClipImagesFromFile"
 							/>
 						</div>
 						<Button @click="exportClipImages(clipImages)" variant="outline"

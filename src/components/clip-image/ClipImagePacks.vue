@@ -13,10 +13,15 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
+	DialogClose,
 } from '@/components/ui/dialog';
 import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
 import { PackSelectMode } from '@/types/packSelectMode';
+
+const emit = defineEmits<{
+	(e: 'importClipImages', images: ClipImage[]): void;
+}>();
 
 const isOpen = ref(false);
 
@@ -149,9 +154,14 @@ watch(isOpen, async (open) => {
 			</div>
 
 			<DialogFooter class="p-6 pt-0">
-				<Button :disabled="selectedClipImages.length === 0" type="submit"
-					>Import ({{ selectedClipImages.length }})</Button
-				>
+				<DialogClose as-child>
+					<Button
+						@click="emit('importClipImages', selectedClipImages)"
+						:disabled="selectedClipImages.length === 0"
+						type="submit"
+						>Import ({{ selectedClipImages.length }})</Button
+					>
+				</DialogClose>
 			</DialogFooter>
 		</DialogContent>
 	</Dialog>
