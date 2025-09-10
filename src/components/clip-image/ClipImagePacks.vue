@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 
 import type { ClipImage } from '@/types/clipImage';
 
@@ -13,25 +14,74 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-
 import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
+import { PackSelectMode } from '@/types/packSelectMode';
+
+const isOpen = ref(false);
 
 const packFiles = import.meta.glob('@/assets/packs/*.json');
-
 const packs = ref<Record<string, ClipImage[]>>({});
-const packsLoaded = ref(false);
-
 const selectedPack = ref<string>('cats');
+const packsLoaded = ref(false);
+const currentPackImages = computed(() => packs.value[selectedPack.value] || []);
 
-const dialogOpen = ref(false);
+const selectedClipImages = ref<ClipImage[]>([]);
 
-watch(dialogOpen, async (open) => {
+const selectedFromCurrentPack = computed(() =>
+	selectedClipImages.value.filter((selectedImg) =>
+		currentPackImages.value.some((packImg) => packImg.id === selectedImg.id)
+	)
+);
+
+const isCurrentPackFullySelected = computed(
+	() =>
+		currentPackImages.value.length > 0 &&
+		selectedFromCurrentPack.value.length === currentPackImages.value.length
+);
+
+const selectMode = computed(() =>
+	isCurrentPackFullySelected.value ? PackSelectMode.DESELECT : PackSelectMode.SELECT_ALL
+);
+
+function isImageSelected(img: ClipImage) {
+	return selectedClipImages.value.some((selectedImg) => selectedImg.id === img.id);
+}
+
+function selectClipImage(img: ClipImage) {
+	if (isImageSelected(img)) {
+		selectedClipImages.value = selectedClipImages.value.filter((i) => i.id !== img.id);
+	} else {
+		selectedClipImages.value.push(img);
+	}
+}
+
+function selectAllToggle() {
+	if (isCurrentPackFullySelected.value) {
+		// Deselect all images from current pack
+		selectedClipImages.value = selectedClipImages.value.filter(
+			(selectedImg) =>
+				!currentPackImages.value.some((packImg) => packImg.id === selectedImg.id)
+		);
+	} else {
+		// Select all unselected images from current pack
+		const unselectedImages = currentPackImages.value.filter(
+			(packImg) => !isImageSelected(packImg)
+		);
+		selectedClipImages.value.push(...unselectedImages);
+	}
+}
+
+watch(isOpen, async (open) => {
 	if (open && !packsLoaded.value) {
 		for (const path in packFiles) {
 			const packName = path.split('/').pop()?.replace('.json', '') || 'unknown';
-			const mod = (await packFiles[path]()) as { default: ClipImage[] };
-			packs.value[packName] = mod.default;
+			const mod = (await packFiles[path]()) as { default: Omit<ClipImage, 'id'>[] };
+
+			packs.value[packName] = mod.default.map((img) => ({
+				id: uuidv4(),
+				...img,
+			}));
 		}
 
 		packsLoaded.value = true;
@@ -40,7 +90,7 @@ watch(dialogOpen, async (open) => {
 </script>
 
 <template>
-	<Dialog v-model:open="dialogOpen">
+	<Dialog v-model:open="isOpen">
 		<DialogTrigger as-child>
 			<Button variant="outline">Packs</Button>
 		</DialogTrigger>
@@ -48,8 +98,20 @@ watch(dialogOpen, async (open) => {
 			class="sm:max-w-[425px] md:max-w-[80vw] grid-rows-[auto_minmax(0,1fr)_auto] p-0 h-[90dvh]"
 		>
 			<DialogHeader class="p-6 pb-0">
-				<DialogTitle>Packs</DialogTitle>
-				<DialogDescription>Add clip images from packs to your library</DialogDescription>
+				<div class="flex justify-between">
+					<div>
+						<DialogTitle>Packs</DialogTitle>
+						<DialogDescription
+							>Add clip images from packs to your library</DialogDescription
+						>
+					</div>
+					<Button
+						@click="selectAllToggle"
+						class="capitalize w-24 mr-8"
+						variant="outline"
+						>{{ selectMode }}</Button
+					>
+				</div>
 			</DialogHeader>
 
 			<div class="flex gap-4 overflow-y-auto px-6">
@@ -68,13 +130,17 @@ watch(dialogOpen, async (open) => {
 					<div v-if="!packsLoaded" class="text-gray-500">Loading packs...</div>
 					<div v-else>
 						<div :key="selectedPack.toString()" class="space-y-4">
-							<div class="flex flex-wrap gap-2">
+							<div class="flex flex-wrap gap-1">
 								<img
-									v-for="img in packs[selectedPack]"
-									:key="img.src"
+									v-for="img in currentPackImages"
+									@click="selectClipImage(img)"
+									:key="img.id"
 									:src="img.src"
-									:alt="img.keywords.join(', ')"
-									class="w-16 h-16 object-contain rounded cursor-pointer hover:scale-105 transition"
+									class="w-18 h-18 p-2 object-contain rounded cursor-pointer hover:scale-105 transition"
+									:class="{
+										'bg-violet-500/25 border-2 border-violet-500/25':
+											isImageSelected(img),
+									}"
 								/>
 							</div>
 						</div>
@@ -83,7 +149,9 @@ watch(dialogOpen, async (open) => {
 			</div>
 
 			<DialogFooter class="p-6 pt-0">
-				<Button type="submit">Save changes</Button>
+				<Button :disabled="selectedClipImages.length === 0" type="submit"
+					>Import ({{ selectedClipImages.length }})</Button
+				>
 			</DialogFooter>
 		</DialogContent>
 	</Dialog>
