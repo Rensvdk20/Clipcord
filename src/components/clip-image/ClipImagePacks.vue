@@ -165,6 +165,7 @@ watch(selectedPack, () => {
 										'bg-violet-500/25 border-2 border-violet-500/25':
 											isImageSelected(img),
 									}"
+									loading="lazy"
 								/>
 							</div>
 						</div>
