@@ -111,7 +111,9 @@ watch(selectedPack, () => {
 		<DialogTrigger as-child>
 			<Button variant="outline">Packs</Button>
 		</DialogTrigger>
-		<DialogContent class="w-full sm:max-w-[90vw] md:max-w-[90vw] xl:max-w-[80vw] p-0 h-[90dvh]">
+		<DialogContent
+			class="w-full sm:max-w-[90vw] md:max-w-[90vw] xl:max-w-[80vw] p-0 h-[90dvh] flex flex-col min-h-0"
+		>
 			<DialogHeader class="p-6 pb-0 text-left">
 				<div class="flex justify-between gap-4">
 					<div class="flex flex-col gap-2">
@@ -120,22 +122,20 @@ watch(selectedPack, () => {
 							>Add clip images from packs to your library</DialogDescription
 						>
 					</div>
-					<Button
-						@click="selectAllToggle"
-						class="capitalize w-24 mr-8"
-						variant="outline"
-						>{{ selectMode }}</Button
-					>
+					<div class="flex items-center">
+						<Button
+							@click="selectAllToggle"
+							class="capitalize w-24 mr-8"
+							variant="outline"
+							>{{ selectMode }}</Button
+						>
+					</div>
 				</div>
 			</DialogHeader>
 
-			<div class="flex gap-4 px-6 min-h-0">
-				<div class="flex-shrink-0">
-					<ToggleGroup
-						v-model="selectedPack"
-						class="flex-col gap-2 max-h-fit sticky top-0"
-						type="single"
-					>
+			<div class="flex gap-4 px-6 min-h-0 flex-1">
+				<div class="flex-shrink-0 overflow-y-auto overflow-x-hidden sticky top-0 pr-4">
+					<ToggleGroup v-model="selectedPack" class="flex-col gap-2" type="single">
 						<ToggleGroupItem
 							v-for="(clipImages, packName) in packs"
 							:disabled="selectedPack === packName"
