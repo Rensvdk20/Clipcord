@@ -111,12 +111,10 @@ watch(selectedPack, () => {
 		<DialogTrigger as-child>
 			<Button variant="outline">Packs</Button>
 		</DialogTrigger>
-		<DialogContent
-			class="sm:max-w-[425px] md:max-w-[80vw] grid-rows-[auto_minmax(0,1fr)_auto] p-0 h-[90dvh]"
-		>
-			<DialogHeader class="p-6 pb-0">
-				<div class="flex justify-between">
-					<div>
+		<DialogContent class="w-full sm:max-w-[90vw] md:max-w-[90vw] xl:max-w-[80vw] p-0 h-[90dvh]">
+			<DialogHeader class="p-6 pb-0 text-left">
+				<div class="flex justify-between gap-4">
+					<div class="flex flex-col gap-2">
 						<DialogTitle>Packs</DialogTitle>
 						<DialogDescription
 							>Add clip images from packs to your library</DialogDescription

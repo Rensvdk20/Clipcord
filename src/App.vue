@@ -88,9 +88,9 @@ function deleteClipImage(image: ClipImageType) {
 			</div>
 		</div>
 
-		<div class="grid xl:grid-cols-2 lg:grid-cols-1 lg:gap-4 gap-6">
-			<div class="col-start-1 xl:col-span-2 bg-neutral-800 rounded-lg">
-				<div class="flex xl:flex-row flex-col justify-between xl:items-center">
+		<div class="grid grid-cols-1 lg:gap-4 gap-6">
+			<div class="col-start-1 bg-neutral-800 rounded-lg">
+				<div class="flex md:flex-row flex-col flex-wrap justify-between xl:items-center">
 					<div class="p-4 xl:pr-0">
 						<SlidingToggleGroup
 							class="md:block hidden"
@@ -151,9 +151,7 @@ function deleteClipImage(image: ClipImageType) {
 							</ToggleGroupItem>
 						</ToggleGroup>
 					</div>
-					<div
-						class="p-4 xl:pl-0 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal"
-					>
+					<div class="p-4 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal">
 						<ClipImagePacks @import-clip-images="importClipImages" />
 						<div>
 							<Button variant="outline" @click="exportFileInput?.click()"
@@ -200,7 +198,10 @@ function deleteClipImage(image: ClipImageType) {
 		</div>
 
 		<div class="p-4 bg-neutral-800 rounded-lg mt-6">
-			<div v-if="filteredClipImages.length > 0" class="flex flex-wrap gap-1">
+			<div
+				v-if="filteredClipImages.length > 0"
+				class="flex flex-wrap gap-1 justify-center md:justify-normal"
+			>
 				<ClipImage
 					v-for="(image, index) in filteredClipImages"
 					:key="index"
