@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
+
 import { Copy, Pencil, Trash, X } from 'lucide-vue-next';
 
 import { ClipMode } from '@/types/clipMode';
@@ -16,14 +18,13 @@ import Button from '@/components/ui/button/Button.vue';
 import SlidingToggleGroupItem from '@/components/ui/toggle-group/SlidingToggleGroupItem.vue';
 import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
+import ClipImagePacks from './components/clip-image/ClipImagePacks.vue';
 
 import 'vue-sonner/style.css';
 import { Toaster } from '@/components/ui/sonner/';
-import ClipImagePacks from './components/clip-image/ClipImagePacks.vue';
 
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
-
 const searchClipImages = ref<string>();
 const selectedClipImage = ref<ClipImageType | null>(null);
 const exportFileInput = ref<HTMLInputElement>();
@@ -32,7 +33,22 @@ const { importClipImages, importClipImagesFromFile } = useImportClipImages(clipI
 const { exportClipImages } = useExportClipImages();
 
 onMounted(() => {
-	clipImages.value = JSON.parse(localStorage.getItem('images') || '[]');
+	const storedImages = localStorage.getItem('images');
+	const hasVisited = localStorage.getItem('hasVisited');
+
+	clipImages.value = storedImages ? JSON.parse(storedImages) : [];
+
+	if (!storedImages && !hasVisited) {
+		const packs = import.meta.glob('@/assets/packs/cats.json', { eager: true });
+		const images = (Object.values(packs)[0] as { default: ClipImageType[] }).default || [];
+
+		images.forEach((img) => {
+			img.id = uuidv4();
+		});
+
+		importClipImages(images);
+		localStorage.setItem('hasVisited', 'true');
+	}
 });
 
 const filteredClipImages = computed(() => {
