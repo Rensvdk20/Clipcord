@@ -3,7 +3,7 @@ import type { ClipImage } from '@/types/clipImage';
 import { v4 as uuidv4 } from 'uuid';
 
 export function useImportClipImages(clipImages: Ref<ClipImage[]>) {
-	const importClipImages = (event: Event) => {
+	function importClipImagesFromFile(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
 
@@ -25,9 +25,17 @@ export function useImportClipImages(clipImages: Ref<ClipImage[]>) {
 			}
 		};
 		reader.readAsText(file);
-	};
+	}
+
+	function importClipImages(newImages: ClipImage[]) {
+		if (newImages.length === 0) return;
+
+		clipImages.value = [...clipImages.value, ...newImages];
+		localStorage.setItem('images', JSON.stringify(clipImages.value));
+	}
 
 	return {
+		importClipImagesFromFile,
 		importClipImages,
 	};
 }

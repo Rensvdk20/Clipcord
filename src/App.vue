@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
+
 import { Copy, Pencil, Trash, X } from 'lucide-vue-next';
 
 import { ClipMode } from '@/types/clipMode';
@@ -16,19 +18,37 @@ import Button from '@/components/ui/button/Button.vue';
 import SlidingToggleGroupItem from '@/components/ui/toggle-group/SlidingToggleGroupItem.vue';
 import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
+import ClipImagePacks from './components/clip-image/ClipImagePacks.vue';
+
+import 'vue-sonner/style.css';
+import { Toaster } from '@/components/ui/sonner/';
 
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
-
 const searchClipImages = ref<string>();
 const selectedClipImage = ref<ClipImageType | null>(null);
 const exportFileInput = ref<HTMLInputElement>();
 
-const { importClipImages } = useImportClipImages(clipImages);
+const { importClipImages, importClipImagesFromFile } = useImportClipImages(clipImages);
 const { exportClipImages } = useExportClipImages();
 
 onMounted(() => {
-	clipImages.value = JSON.parse(localStorage.getItem('images') || '[]');
+	const storedImages = localStorage.getItem('images');
+	const hasVisited = localStorage.getItem('hasVisited');
+
+	clipImages.value = storedImages ? JSON.parse(storedImages) : [];
+
+	if (!storedImages && !hasVisited) {
+		const packs = import.meta.glob('@/assets/packs/cats.json', { eager: true });
+		const images = (Object.values(packs)[0] as { default: ClipImageType[] }).default || [];
+
+		images.forEach((img) => {
+			img.id = uuidv4();
+		});
+
+		importClipImages(images);
+		localStorage.setItem('hasVisited', 'true');
+	}
 });
 
 const filteredClipImages = computed(() => {
@@ -68,9 +88,9 @@ function deleteClipImage(image: ClipImageType) {
 			</div>
 		</div>
 
-		<div class="grid xl:grid-cols-2 lg:grid-cols-1 lg:gap-4 gap-6">
-			<div class="col-start-1 xl:col-span-2 bg-neutral-800 rounded-lg">
-				<div class="flex xl:flex-row flex-col justify-between xl:items-center">
+		<div class="grid grid-cols-1 lg:gap-4 gap-6">
+			<div class="col-start-1 bg-neutral-800 rounded-lg">
+				<div class="flex md:flex-row flex-col flex-wrap justify-between xl:items-center">
 					<div class="p-4 xl:pr-0">
 						<SlidingToggleGroup
 							class="md:block hidden"
@@ -131,9 +151,8 @@ function deleteClipImage(image: ClipImageType) {
 							</ToggleGroupItem>
 						</ToggleGroup>
 					</div>
-					<div
-						class="p-4 xl:pl-0 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal"
-					>
+					<div class="p-4 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal">
+						<ClipImagePacks @import-clip-images="importClipImages" />
 						<div>
 							<Button variant="outline" @click="exportFileInput?.click()"
 								>Import</Button
@@ -143,7 +162,7 @@ function deleteClipImage(image: ClipImageType) {
 								type="file"
 								accept=".json"
 								class="hidden"
-								@change="importClipImages"
+								@change="importClipImagesFromFile"
 							/>
 						</div>
 						<Button @click="exportClipImages(clipImages)" variant="outline"
@@ -179,7 +198,10 @@ function deleteClipImage(image: ClipImageType) {
 		</div>
 
 		<div class="p-4 bg-neutral-800 rounded-lg mt-6">
-			<div v-if="filteredClipImages.length > 0" class="flex flex-wrap gap-1">
+			<div
+				v-if="filteredClipImages.length > 0"
+				class="flex flex-wrap gap-1 justify-center md:justify-normal"
+			>
 				<ClipImage
 					v-for="(image, index) in filteredClipImages"
 					:key="index"
@@ -192,6 +214,7 @@ function deleteClipImage(image: ClipImageType) {
 			<div v-else>No images found</div>
 		</div>
 	</div>
+	<Toaster theme="dark" />
 </template>
 
 <style scoped></style>

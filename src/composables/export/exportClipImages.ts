@@ -1,4 +1,5 @@
 import type { ClipImage } from '@/types/clipImage';
+import { toast } from 'vue-sonner';
 
 export function useExportClipImages() {
 	const exportToJson = <T>(data: T, filename: string): void => {
@@ -14,6 +15,8 @@ export function useExportClipImages() {
 
 		document.body.removeChild(link);
 		URL.revokeObjectURL(url);
+
+		toast.success('Exported images successfully');
 	};
 
 	const exportClipImages = (images: ClipImage[]): void => {

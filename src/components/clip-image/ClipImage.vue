@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ClipImage } from '@/types/clipImage';
 import { ClipMode } from '@/types/clipMode';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
 	image: ClipImage;
@@ -15,7 +16,8 @@ const emit = defineEmits<{
 function selectClipImage() {
 	switch (props.clipMode) {
 		case ClipMode.COPY:
-			return navigator.clipboard.writeText(props.image.src);
+			navigator.clipboard.writeText(props.image.src);
+			return toast.success('Copied to clipboard');
 		case ClipMode.EDIT:
 			return emit('selectClipImage', props.image);
 		case ClipMode.DELETE:
