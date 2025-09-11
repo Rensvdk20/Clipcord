@@ -33,6 +33,8 @@ const currentPackImages = computed(() => packs.value[selectedPack.value] || []);
 
 const selectedClipImages = ref<ClipImage[]>([]);
 
+const scrollContainer = ref<HTMLElement>();
+
 const selectedFromCurrentPack = computed(() =>
 	selectedClipImages.value.filter((selectedImg) =>
 		currentPackImages.value.some((packImg) => packImg.id === selectedImg.id)
@@ -77,6 +79,11 @@ function selectAllToggle() {
 	}
 }
 
+function importClipImages() {
+	emit('importClipImages', selectedClipImages.value);
+	selectedClipImages.value = [];
+}
+
 watch(isOpen, async (open) => {
 	if (open && !packsLoaded.value) {
 		for (const path in packFiles) {
@@ -90,6 +97,12 @@ watch(isOpen, async (open) => {
 		}
 
 		packsLoaded.value = true;
+	}
+});
+
+watch(selectedPack, () => {
+	if (scrollContainer.value) {
+		scrollContainer.value.scrollTop = 0;
 	}
 });
 </script>
@@ -119,19 +132,25 @@ watch(isOpen, async (open) => {
 				</div>
 			</DialogHeader>
 
-			<div class="flex gap-4 overflow-y-auto px-6">
-				<ToggleGroup v-model="selectedPack" class="flex-col max-h-fit" type="single">
-					<ToggleGroupItem
-						v-for="(clipImages, packName) in packs"
-						:disabled="selectedPack === packName"
-						:value="packName"
-						class="w-full my-1 justify-normal"
-						aria-label="Copy mode"
+			<div class="flex gap-4 px-6 min-h-0">
+				<div class="flex-shrink-0">
+					<ToggleGroup
+						v-model="selectedPack"
+						class="flex-col gap-2 max-h-fit sticky top-0"
+						type="single"
 					>
-						{{ packName }} <span class="text-gray-500">({{ clipImages.length }})</span>
-					</ToggleGroupItem>
-				</ToggleGroup>
-				<div class="w-full">
+						<ToggleGroupItem
+							v-for="(clipImages, packName) in packs"
+							:disabled="selectedPack === packName"
+							:value="packName"
+							class="w-full justify-normal"
+						>
+							{{ packName.replace(/_/g, ' ') }}
+							<span class="text-gray-500">({{ clipImages.length }})</span>
+						</ToggleGroupItem>
+					</ToggleGroup>
+				</div>
+				<div ref="scrollContainer" class="w-full overflow-y-auto">
 					<div v-if="!packsLoaded" class="text-gray-500">Loading packs...</div>
 					<div v-else>
 						<div :key="selectedPack.toString()" class="space-y-4">
@@ -156,7 +175,7 @@ watch(isOpen, async (open) => {
 			<DialogFooter class="p-6 pt-0">
 				<DialogClose as-child>
 					<Button
-						@click="emit('importClipImages', selectedClipImages)"
+						@click="importClipImages"
 						:disabled="selectedClipImages.length === 0"
 						type="submit"
 						>Import ({{ selectedClipImages.length }})</Button
