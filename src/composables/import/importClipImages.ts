@@ -30,7 +30,12 @@ export function useImportClipImages(clipImages: Ref<ClipImage[]>) {
 	function importClipImages(newImages: ClipImage[]) {
 		if (newImages.length === 0) return;
 
-		clipImages.value = [...clipImages.value, ...newImages];
+		const imagesWithNewIds = newImages.map((img) => ({
+			...img,
+			id: uuidv4(),
+		}));
+
+		clipImages.value = [...clipImages.value, ...imagesWithNewIds];
 		localStorage.setItem('images', JSON.stringify(clipImages.value));
 	}
 
