@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { ClipImage } from '@/types/clipImage';
@@ -25,15 +25,30 @@ const emit = defineEmits<{
 
 const isOpen = ref(false);
 
-const packFiles = import.meta.glob('@/assets/packs/*.json');
+const packFiles = import.meta.glob('@/assets/packs/*.json', { eager: true });
 const packs = ref<Record<string, ClipImage[]>>({});
 const selectedPack = ref<string>('cats');
-const packsLoaded = ref(false);
 const currentPackImages = computed(() => packs.value[selectedPack.value] || []);
+const packsLoaded = ref(false);
 
 const selectedClipImages = ref<ClipImage[]>([]);
 
 const scrollContainer = ref<HTMLElement>();
+
+onMounted(() => {
+	if (!packsLoaded.value) {
+		for (const path in packFiles) {
+			const packName = path.split('/').pop()?.replace('.json', '') || 'unknown';
+			const mod = packFiles[path] as { default: Omit<ClipImage, 'id'>[] };
+
+			packs.value[packName] = mod.default.map((img) => ({
+				id: uuidv4(),
+				...img,
+			}));
+		}
+		packsLoaded.value = true;
+	}
+});
 
 const selectedFromCurrentPack = computed(() =>
 	selectedClipImages.value.filter((selectedImg) =>
@@ -83,22 +98,6 @@ function importClipImages() {
 	emit('importClipImages', selectedClipImages.value);
 	selectedClipImages.value = [];
 }
-
-watch(isOpen, async (open) => {
-	if (open && !packsLoaded.value) {
-		for (const path in packFiles) {
-			const packName = path.split('/').pop()?.replace('.json', '') || 'unknown';
-			const mod = (await packFiles[path]()) as { default: Omit<ClipImage, 'id'>[] };
-
-			packs.value[packName] = mod.default.map((img) => ({
-				id: uuidv4(),
-				...img,
-			}));
-		}
-
-		packsLoaded.value = true;
-	}
-});
 
 watch(selectedPack, () => {
 	if (scrollContainer.value) {
