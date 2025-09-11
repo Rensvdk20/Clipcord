@@ -18,10 +18,11 @@ import Button from '@/components/ui/button/Button.vue';
 import SlidingToggleGroupItem from '@/components/ui/toggle-group/SlidingToggleGroupItem.vue';
 import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue';
-import ClipImagePacks from './components/clip-image/ClipImagePacks.vue';
+import ClipImagePacks from './components/clip-image/modals/ClipImagePacks.vue';
 
 import 'vue-sonner/style.css';
 import { Toaster } from '@/components/ui/sonner/';
+import DeleteModal from './components/clip-image/modals/DeleteModal.vue';
 
 const clipImages = ref<ClipImageType[]>([]);
 const clipMode = ref<ClipMode>(ClipMode.COPY);
@@ -63,6 +64,11 @@ const filteredClipImages = computed(() => {
 function deleteClipImage(image: ClipImageType) {
 	clipImages.value = clipImages.value.filter((img) => img.id !== image.id);
 	localStorage.setItem('images', JSON.stringify(clipImages.value));
+}
+
+function deleteAllClipImages() {
+	clipImages.value = [];
+	localStorage.setItem('images', JSON.stringify([]));
 }
 </script>
 
@@ -151,7 +157,9 @@ function deleteClipImage(image: ClipImageType) {
 							</ToggleGroupItem>
 						</ToggleGroup>
 					</div>
-					<div class="p-4 pt-0 md:pt-4 flex gap-2 justify-center md:justify-normal">
+					<div
+						class="flex flex-wrap p-4 pt-0 md:pt-4 gap-2 justify-center md:justify-normal"
+					>
 						<ClipImagePacks @import-clip-images="importClipImages" />
 						<div>
 							<Button variant="outline" @click="exportFileInput?.click()"
@@ -168,6 +176,7 @@ function deleteClipImage(image: ClipImageType) {
 						<Button @click="exportClipImages(clipImages)" variant="outline"
 							>Export</Button
 						>
+						<DeleteModal @delete:clipImages="deleteAllClipImages" />
 					</div>
 				</div>
 				<hr class="lg:block hidden" />
@@ -176,7 +185,11 @@ function deleteClipImage(image: ClipImageType) {
 			<div
 				class="flex flex-col lg:col-start-3 justify-center p-4 bg-neutral-800 rounded-lg xl:w-150 xl:max-w-150 md:h-60 sm:h-auto"
 			>
-				<EditClipImage :clipImages :selectedClipImage :clipMode />
+				<EditClipImage
+					:clipImages="clipImages"
+					:selectedClipImage="selectedClipImage"
+					:clipMode="clipMode"
+				/>
 			</div>
 		</div>
 
