@@ -16,7 +16,7 @@ An image clipboard application that lets you organize, search, and manage your c
 
 Browse through various categories
 
-<img width="600px" src="https://github-production-user-asset-6210df.s3.amazonaws.com/56295023/488909201-877a5239-11ae-4d2e-a881-62fae176b178.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250912%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250912T152613Z&X-Amz-Expires=300&X-Amz-Signature=d3a3fd24ecbe08ea61e84175394c33dda21e6eedd7c249e28595b0edf9ebfa84&X-Amz-SignedHeaders=host" />
+<img width="600px" src="https://github.com/user-attachments/assets/816b2422-598e-4dbb-ae91-d52a87d23f10" />
 
 ### Add your own
 
